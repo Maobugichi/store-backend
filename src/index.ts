@@ -1,9 +1,9 @@
 import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
-import salesRoute from "../src/routes/sales.routes.js"
-import inventoryRoutes from "../src/routes/inventory.js"
-import notifRoutes from "../src/routes/notification.routes.js"
+import salesRoute from "./routes/sales.routes.js"
+import inventoryRoutes from "./routes/inventory.js"
+import notifRoutes from "./routes/notification.routes.js"
 import { startAutoReplenishWorker, stopAutoReplenishWorker } from "./workers/autoReplenishWorker.js"
 
 dotenv.config()
