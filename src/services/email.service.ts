@@ -1,5 +1,3 @@
-
-import express,  { type Request, type Response } from 'express';
 import cron from 'node-cron';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
