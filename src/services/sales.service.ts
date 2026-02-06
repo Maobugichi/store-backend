@@ -93,19 +93,3 @@ export const processSale = async  (input:SaleInput) => {
         client.release();
     }
 }
-
-
-
-/*
-  A couple days ago, I shared the inventory system I built for my mum.
-
- One comment sparked a lot of questions… so here’s a quick demo showing how it actually works.
-
-For my big business owners still counting stock manually, this is your sign.
-
- Let me build you a tool that saves time, protects your money, and doesn’t drain your budget.
-
-Track your stock in real time, get email alerts when items run low, restock from your phone anywhere, anytime, and see your daily profits update live.
-
- Less stress. More control. Smarter business. Thanks so much Taiwo Akinsanya for that question
-*/

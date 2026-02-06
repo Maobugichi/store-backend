@@ -4,7 +4,7 @@ export async function getTodayProfit() {
   const { rows } = await pool.query(`
     SELECT COALESCE(SUM(profit), 0) AS total_profit
     FROM daily_sales
-    WHERE sale_date = CURRENT_DATE
+    WHERE sale_date::date = CURRENT_DATE
   `);
 
   return rows[0];

@@ -1,4 +1,3 @@
-// src/workers/autoReplenishWorker.ts
 import pool from "../config/db.js";
 
 interface ReplenishResult {

@@ -4,6 +4,8 @@ import cors from "cors"
 import salesRoute from "./routes/sales.routes.js"
 import inventoryRoutes from "./routes/inventory.js"
 import notifRoutes from "./routes/notification.routes.js"
+import profitRoutes from "./routes/profit.routes.js"
+import restockRoute from "./routes/restock.routes.js"
 import { startAutoReplenishWorker, stopAutoReplenishWorker } from "./workers/autoReplenishWorker.js"
 
 dotenv.config()
@@ -23,6 +25,8 @@ app.use(express.json());
 
 app.use("/api/sales", salesRoute);
 app.use("/api/inventory", inventoryRoutes);
+app.use('/api/profit', profitRoutes);
+app.use('/api/restock',restockRoute)
 app.use("/api/", notifRoutes);
 
 
@@ -31,8 +35,6 @@ let workerInterval: NodeJS.Timeout;
 
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  
-  
   workerInterval = startAutoReplenishWorker(5);
 });
 

@@ -12,9 +12,10 @@ const pool = new Pool({
 });
 
 
-pool.on('connect', () => {
-    console.log('Connected to Supabase database');
+pool.on('connect', (client) => {
+     client.query("SET TIME ZONE 'Africa/Lagos'");
 });
+
 
 pool.on('error', (err) => {
     console.error('Database connection error:', err);
