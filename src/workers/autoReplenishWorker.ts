@@ -91,7 +91,7 @@ export const startAutoReplenishWorker = (intervalMinutes: number = 5): NodeJS.Ti
       if (results.length > 0) {
         console.log(`Replenished ${results.length} item(s)`);
       } else {
-        console.log('tock levels OK - no replenishment needed');
+        console.log('Stock levels OK - no replenishment needed');
       }
     } catch (err) {
       console.error('Scheduled replenish check failed:', err);

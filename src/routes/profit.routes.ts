@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getProfitByProduct, getTodayProfit } from "../services/profit.service";
+import { getProfitByProduct, getTodayProfit } from "../services/profit.service.js";
 
 const router = Router()
 

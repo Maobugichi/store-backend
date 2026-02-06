@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { restockItem } from "../services/restock.service";
+import { restockItem } from "../services/restock.service.js";
 
 const router = Router();
 
