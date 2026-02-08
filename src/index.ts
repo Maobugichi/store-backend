@@ -6,7 +6,9 @@ import inventoryRoutes from "./routes/inventory.js"
 import notifRoutes from "./routes/notification.routes.js"
 import profitRoutes from "./routes/profit.routes.js"
 import restockRoute from "./routes/restock.routes.js"
+import authRoute from './routes/auth.routes.js'
 import { startAutoReplenishWorker, stopAutoReplenishWorker } from "./workers/autoReplenishWorker.js"
+import { requireAuth } from "./middleware/auth.middleware.js"
 
 dotenv.config()
 
@@ -23,12 +25,28 @@ app.use(cors({
 
 app.use(express.json());
 
-app.use("/api/sales", salesRoute);
-app.use("/api/inventory", inventoryRoutes);
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+
 app.use('/api/profit', profitRoutes);
 app.use('/api/restock',restockRoute)
 app.use("/api/", notifRoutes);
 
+app.use('/api/' , authRoute);
+app.use("/api/sales", requireAuth, salesRoute);
+app.use("/api/inventory", requireAuth, inventoryRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Server error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
 
 let workerInterval: NodeJS.Timeout;
 

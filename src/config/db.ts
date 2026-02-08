@@ -8,7 +8,7 @@ const { Pool } = pkg;
 
 const pool = new Pool({
     connectionString: process.env.CONNECTION_STRING,
-    ssl: { rejectUnauthorized: false }
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 
@@ -19,6 +19,7 @@ pool.on('connect', (client) => {
 
 pool.on('error', (err) => {
     console.error('Database connection error:', err);
+    setTimeout(() => process.exit(1), 100)  
 });
 
 export default pool;
