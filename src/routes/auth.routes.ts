@@ -7,7 +7,7 @@ import {
     generateInviteCode
 } from '../services/auth.service.js';
 import { AuthRequest, requireAuth } from "../middleware/auth.middleware.js";
-import { registerSchema } from "../config/zod.config.js";
+import { loginSchema, registerSchema } from "../config/zod.config.js";
 
 const router = Router();
 
@@ -90,9 +90,9 @@ router.post('/register', async (req:Request,res:Response):Promise<void> => {
 
 router.post('/login' , async (req:Request, res:Response) => {
      try {
-        const validate = registerSchema.parse(req.body);
+        const validate = loginSchema.parse(req.body);
 
-        const { username, password } = req.body;
+        const { username, password } = validate;
 
         const result = await pool.query(
             `SELECT id, username, email, password_hash, created_at FROM admins WHERE username = $1`,
