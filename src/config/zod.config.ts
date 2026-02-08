@@ -17,5 +17,5 @@ export const registerSchema = z.object({
     .regex(/[\W_]/, "Password must contain at least one special character"),
 
   inviteCode: z.string()
-    .length(6, "Invite code must be exactly 6 characters")
+    .length(32, "Invite code must be exactly 6 characters")
 });
