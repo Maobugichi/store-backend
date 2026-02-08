@@ -1,6 +1,6 @@
 import { Request , Response , NextFunction } from "express";
-import { verifyToken } from "../services/auth.service";
-import pool from "../config/db";
+import { verifyToken } from "../services/auth.service.js";
+import pool from "../config/db.js";
 
 export interface AuthRequest extends Request {
     adminId?:number;

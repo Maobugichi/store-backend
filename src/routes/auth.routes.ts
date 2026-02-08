@@ -6,8 +6,8 @@ import {
     generateToken,
     generateInviteCode
 } from '../services/auth.service.js';
-import { AuthRequest, requireAuth } from "../middleware/auth.middleware";
-import { registerSchema } from "../config/zod.config";
+import { AuthRequest, requireAuth } from "../middleware/auth.middleware.js";
+import { registerSchema } from "../config/zod.config.js";
 
 const router = Router();
 
