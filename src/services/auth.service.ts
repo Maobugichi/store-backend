@@ -2,7 +2,7 @@ import bcryptyjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto'
 
-const SALT_ROUNDS = 10;
+export const SALT_ROUNDS = 10;
 
 export const env = {
   JWT_SECRET: process.env.JWT_SECRET ?? (() => {

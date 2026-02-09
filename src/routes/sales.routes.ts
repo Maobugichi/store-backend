@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { processSale } from "../services/sales.service.js";
 import type { SaleInput } from "../types/sale.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
 
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
     const input: SaleInput = req.body;
 

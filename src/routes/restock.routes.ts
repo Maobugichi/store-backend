@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { restockItem } from "../services/restock.service.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-router.post("/restock", async (req, res) => {
+router.post("/restock", requireAuth, async (req, res) => {
   try {
     const result = await restockItem(req.body);
     res.json(result);
