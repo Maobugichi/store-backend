@@ -31,7 +31,7 @@ app.get('/api/health', (req, res) => {
 
 
 app.use('/api/profit', profitRoutes);
-app.use('/api/restock',restockRoute)
+app.use('/api',restockRoute)
 app.use("/api/", notifRoutes);
 
 app.use('/api/' , authRoute);
