@@ -14,7 +14,7 @@ import logger from "./services/logger.service.js"
 
 dotenv.config();
 
-const requiredEnvVars = ['PORT', 'DATABASE_URL', 'JWT_SECRET'];
+const requiredEnvVars = ['PORT', 'CONNECTION_STRING', 'JWT_SECRET'];
 const missing = requiredEnvVars.filter(v => !process.env[v]);
 
 if (missing.length > 0) {
