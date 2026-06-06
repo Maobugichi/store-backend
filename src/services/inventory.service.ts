@@ -73,3 +73,52 @@ export const getInventoryOverview = async() => {
     const { rows } = await pool.query(query);
     return rows;
 }
+
+export interface CreateInventoryItemInput {
+  name: string;
+  pack_size: number;
+  packs_in_stock: number;
+  pieces_in_stock: number;
+  purchase_price_pack?: number | null | undefined;
+  purchase_price_piece?: number | null | undefined;
+  selling_price_pack?: number | null | undefined;
+  selling_price_piece?: number | null | undefined;
+  low_stock_threshold?: number | null | undefined;
+}
+
+export const createInventoryItem = async (data: CreateInventoryItemInput) => {
+  const {
+    name,
+    pack_size,
+    packs_in_stock,
+    pieces_in_stock,
+    purchase_price_pack,
+    purchase_price_piece,
+    selling_price_pack,
+    selling_price_piece,
+    low_stock_threshold,
+  } = data;
+
+  const { rows } = await pool.query(
+    `INSERT INTO drinks_inventory (
+      name, pack_size, packs_in_stock, pieces_in_stock,
+      purchase_price_pack, purchase_price_piece,
+      selling_price_pack, selling_price_piece,
+      low_stock_threshold
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+    RETURNING *`,
+    [
+      name,
+      pack_size,
+      packs_in_stock,
+      pieces_in_stock,
+      purchase_price_pack ?? null,
+      purchase_price_piece ?? null,
+      selling_price_pack ?? null,
+      selling_price_piece ?? null,
+      low_stock_threshold ?? null,
+    ]
+  );
+
+  return rows[0];
+};
