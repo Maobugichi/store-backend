@@ -34,3 +34,17 @@ export function resolvePricing(input: PricingInput) {
     purchasePricePiece: resolvedPurchasePiece,
   };
 }
+
+
+export function resolveHalfPackPricing(input: Pick<PricingInput, "sellingPricePack" | "purchasePricePack">) {
+  const { sellingPricePack, purchasePricePack } = input;
+
+  if (!sellingPricePack || !purchasePricePack) {
+    throw new Error("Pack pricing not configured — cannot derive half-pack price");
+  }
+
+  return {
+    sellingPriceHalfPack: sellingPricePack / 2,
+    purchasePriceHalfPack: purchasePricePack / 2,
+  };
+}
