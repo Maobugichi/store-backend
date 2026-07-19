@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth.middleware.js';
+import { requireRole } from '../middleware/requireRole.js';
 import {
   getInventoryOverview,
   createInventoryItem,
@@ -7,8 +8,6 @@ import {
 import z from 'zod';
 
 const router = Router();
-
-
 
 const createItemSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -31,7 +30,7 @@ router.get('/', requireAuth, async (req: Request, res: Response) => {
   }
 });
 
-router.post('/', requireAuth, async (req: Request, res: Response) => {
+router.post('/', requireAuth, requireRole('admin'), async (req: Request, res: Response) => {
   try {
     const validated = createItemSchema.parse(req.body);
 

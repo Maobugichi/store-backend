@@ -11,16 +11,20 @@ export async function getTodayProfit() {
 }
 
 export async function getProfitByProduct() {
+  // FIX: was `GROUP BY d.name, s.sale_date` — since sale_date is a real
+  // timestamptz (not date-only), two sales of the same product on the
+  // same day almost never share an identical timestamp, so they never
+  // actually merged into one row. Casting to ::date fixes the grouping.
   const { rows } = await pool.query(`
     SELECT
       d.name,
-      s.sale_date,
+      s.sale_date::date AS sale_date,
       SUM(s.profit) AS total_profit,
       SUM(s.quantity) AS total_units_sold
     FROM daily_sales s
     JOIN drinks_inventory d ON d.id = s.inventory_id
-    GROUP BY d.name, s.sale_date
-    ORDER BY s.sale_date DESC, total_profit DESC
+    GROUP BY d.name, s.sale_date::date
+    ORDER BY s.sale_date::date DESC, total_profit DESC
   `);
 
   return rows;
@@ -135,4 +139,3 @@ export async function getMergedWeekly(startDate: string, endDate: string) {
 
   return rows;
 }
-

@@ -4,6 +4,7 @@ import pool from "../config/db.js";
 
 export interface AuthRequest extends Request {
     adminId?:number;
+    role?:string;
 }
 
 export const requireAuth = async (
@@ -29,10 +30,9 @@ export const requireAuth = async (
     }
 
     const result = await pool.query(`
-        SELECT id FROM admins WHERE id = $1`,
+        SELECT id, role FROM admins WHERE id = $1`,
         [decoded.adminId]
     );
-
 
     if (result.rows.length === 0) {
         res.status(401).json({ error:'Admin not found'});
@@ -40,6 +40,7 @@ export const requireAuth = async (
     }
 
     req.adminId = decoded.adminId;
+    req.role = result.rows[0].role;
     next();
   } catch(error) {
     console.error('Auth middleware error', error);

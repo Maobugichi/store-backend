@@ -11,6 +11,9 @@ import { startAutoReplenishWorker, stopAutoReplenishWorker } from "./workers/aut
 import { requireAuth } from "./middleware/auth.middleware.js"
 import helmet from "helmet"
 import logger from "./services/logger.service.js"
+import damageRoute from "./routes/damage.routes.js"
+// ...
+
 
 dotenv.config();
 
@@ -59,6 +62,7 @@ app.use("/api/", notifRoutes);
 
 app.use('/api/' , authRoute);
 app.use("/api/sales", requireAuth, salesRoute);
+app.use("/api/damages", requireAuth, damageRoute);
 app.use("/api/inventory", requireAuth, inventoryRoutes);
 
 app.use((req, res) => {
