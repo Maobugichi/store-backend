@@ -39,8 +39,8 @@ export const processSale = async (input: SaleInput) => {
       }
     }
 
-    if (input.overrideSellingPrice != null && input.overrideSellingPrice <= 0) {
-      throw new Error("Override selling price must be positive");
+    if (input.overrideTotalPrice != null && input.overrideTotalPrice <= 0) {
+      throw new Error("Override total price must be positive");
     }
 
     const inventoryRes = await client.query(
@@ -111,11 +111,20 @@ export const processSale = async (input: SaleInput) => {
       );
     }
 
-    if (input.overrideSellingPrice != null) {
-      sellingPrice = input.overrideSellingPrice;
-    }
+    let profit: number;
 
-    const profit = (sellingPrice - purchasePrice) * input.quantity;
+    if (input.overrideTotalPrice != null) {
+      // overrideTotalPrice is what was actually charged for this whole
+      // sale (e.g. 900 for 2 units) — compute profit straight from it
+      // rather than sellingPrice * quantity, so a total that doesn't
+      // divide evenly (950 for 3 units) doesn't introduce rounding error.
+      profit = input.overrideTotalPrice - purchasePrice * input.quantity;
+      // Still record a per-unit selling_price for the row, for consistency
+      // with every other sale in this table.
+      sellingPrice = input.overrideTotalPrice / input.quantity;
+    } else {
+      profit = (sellingPrice - purchasePrice) * input.quantity;
+    }
 
     await client.query(
       `INSERT INTO daily_sales

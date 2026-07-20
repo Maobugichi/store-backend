@@ -3,5 +3,6 @@ export interface SaleInput {
   saleType: "pack" | "piece" | "half_pack";
   quantity: number;
   saleDate?: string;
-  overrideSellingPrice?: number;
+  
+  overrideTotalPrice?: number;
 }

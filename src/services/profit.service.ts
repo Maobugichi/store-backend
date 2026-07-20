@@ -11,20 +11,27 @@ export async function getTodayProfit() {
 }
 
 export async function getProfitByProduct() {
-  // FIX: was `GROUP BY d.name, s.sale_date` — since sale_date is a real
-  // timestamptz (not date-only), two sales of the same product on the
-  // same day almost never share an identical timestamp, so they never
-  // actually merged into one row. Casting to ::date fixes the grouping.
+  // FIX (round 2): `s.sale_date::date` had two problems:
+  //  1. It returns a DATE type, which pg parses as midnight UTC — once
+  //     displayed in Africa/Lagos on the frontend, every row showed
+  //     "1:00 AM" regardless of the actual sale time (a day aggregate
+  //     showing a specific time never made sense anyway — see ProfitTable fix).
+  //  2. `::date` resolves the calendar day using Postgres's session
+  //     timezone, not explicitly Africa/Lagos — inconsistent with the
+  //     rest of this feature, and could misfile a late-evening Lagos
+  //     sale under the wrong day if the session tz isn't Lagos.
+  // Returning a plain "YYYY-MM-DD" text string, explicitly computed in
+  // Africa/Lagos, avoids both.
   const { rows } = await pool.query(`
     SELECT
       d.name,
-      s.sale_date::date AS sale_date,
+      to_char(s.sale_date AT TIME ZONE 'Africa/Lagos', 'YYYY-MM-DD') AS sale_date,
       SUM(s.profit) AS total_profit,
       SUM(s.quantity) AS total_units_sold
     FROM daily_sales s
     JOIN drinks_inventory d ON d.id = s.inventory_id
-    GROUP BY d.name, s.sale_date::date
-    ORDER BY s.sale_date::date DESC, total_profit DESC
+    GROUP BY d.name, to_char(s.sale_date AT TIME ZONE 'Africa/Lagos', 'YYYY-MM-DD')
+    ORDER BY to_char(s.sale_date AT TIME ZONE 'Africa/Lagos', 'YYYY-MM-DD') DESC, total_profit DESC
   `);
 
   return rows;

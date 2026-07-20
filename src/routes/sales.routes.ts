@@ -10,7 +10,7 @@ const VALID_SALE_TYPES = ["pack", "piece", "half_pack"];
 
 router.post("/", requireAuth, requireRole("admin", "seller"), async (req, res) => {
   try {
-    const { inventoryId, saleType, quantity, saleDate, overrideSellingPrice } = req.body;
+    const { inventoryId, saleType, quantity, saleDate, overrideTotalPrice } = req.body;
 
     const parsedInventoryId = Number(inventoryId);
     if (!inventoryId || !Number.isInteger(parsedInventoryId) || parsedInventoryId <= 0) {
@@ -39,13 +39,13 @@ router.post("/", requireAuth, requireRole("admin", "seller"), async (req, res) =
       });
     }
 
-    let parsedOverridePrice: number | undefined;
-    if (overrideSellingPrice != null && overrideSellingPrice !== "") {
-      parsedOverridePrice = Number(overrideSellingPrice);
-      if (!Number.isFinite(parsedOverridePrice) || parsedOverridePrice <= 0) {
+    let parsedOverrideTotal: number | undefined;
+    if (overrideTotalPrice != null && overrideTotalPrice !== "") {
+      parsedOverrideTotal = Number(overrideTotalPrice);
+      if (!Number.isFinite(parsedOverrideTotal) || parsedOverrideTotal <= 0) {
         return res.status(400).json({
           success: false,
-          message: "overrideSellingPrice must be a positive number",
+          message: "overrideTotalPrice must be a positive number",
         });
       }
     }
@@ -53,13 +53,19 @@ router.post("/", requireAuth, requireRole("admin", "seller"), async (req, res) =
     // saleDate is expected as a plain "YYYY-MM-DD" string (e.g. from a
     // native date input, or built client-side from local Date getters).
     // Deeper format validation happens in the service, against the DB.
+    // Built this way (rather than assigning `saleDate || undefined` etc.
+    // directly) because SaleInput's optional fields are typed `number`,
+    // not `number | undefined` — with exactOptionalPropertyTypes on,
+    // TS distinguishes "key absent" from "key present with value undefined".
+    // Spreading conditionally keeps the key fully absent when there's no value.
     const input: SaleInput = {
       inventoryId: parsedInventoryId,
       saleType,
       quantity: parsedQuantity,
       ...(saleDate ? { saleDate } : {}),
-      ...(parsedOverridePrice !== undefined ? { overrideSellingPrice: parsedOverridePrice } : {}),
+      ...(parsedOverrideTotal !== undefined ? { overrideTotalPrice: parsedOverrideTotal } : {}),
     };
+
     const result = await processSale(input);
 
     return res.status(201).json(result);
